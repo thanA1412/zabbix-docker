@@ -17,6 +17,8 @@ services:
    - ${DATA_DIRECTORY}/var/lib/zabbix/mibs:/var/lib/zabbix/mibs:ro
    - snmptraps:/var/lib/zabbix/snmptraps:ro
   tmpfs: /tmp
+  links:
+   - zabbix-snmptraps
   ulimits:
    nproc: 65535
    nofile:
@@ -345,9 +347,9 @@ services:
 
  zabbix-agent:
   init: true
-  profiles:
-   - full
-   - all
+  # profiles:
+  #  - full
+  #  - all
   ports:
    - "${ZABBIX_AGENT_PORT}:10050"
   restart: "${RESTART_POLICY}"
@@ -373,6 +375,7 @@ services:
   pid: "host"
   networks:
    zbx_net_backend:
+    ipv4_address: 172.16.239.2
     aliases:
      - zabbix-agent
      - zabbix-agent-passive
@@ -452,9 +455,9 @@ services:
 # Override snmptrapd command arguments to receive SNMP traps by DNS
 # It must be done with ZBX_SNMP_TRAP_USE_DNS=true environment variable
 #  command: /usr/sbin/snmptrapd -C -c /etc/snmp/snmptrapd.conf -Lo -A
-  profiles:
-   - full
-   - all
+  # profiles:
+  #  - full
+  #  - all
   ports:
    - "${ZABBIX_SNMPTRAPS_PORT}:1162/udp"
   restart: "${RESTART_POLICY}"
